@@ -5,12 +5,12 @@ var canvas = document.getElementById('2dgrid');
 var canvas3d = document.getElementById('3dgrid');
 
 var xVector = {
-    dX: -20 * Math.sin(Math.PI / 3),
+    dX: 20 * Math.sin(Math.PI / 3),
     dY: 20 * Math.cos(Math.PI / 3)
 };
 
 var yVector = {
-    dX: 20 * Math.sin(Math.PI / 3),
+    dX: -20 * Math.sin(Math.PI / 3),
     dY: 20 * Math.cos(Math.PI / 3)
 };
 
@@ -25,7 +25,9 @@ var IsoPoint = function(x, y) {
 };
 
 IsoPoint.prototype.addVector = function (vector, size) {
-    size = size || 1;
+    if (size != 0) {
+        size = size || 1;
+    }
     var newPoint = new IsoPoint(this.x, this.y);
     newPoint.x = newPoint.x + vector.dX * size;
     newPoint.y = newPoint.y + vector.dY * size;
@@ -78,6 +80,7 @@ Grid.prototype.changeColor = function (newColor, x, y) {
     if (x == 0 && y == 0) {
         this.currentColor = newColor;
         this.draw(canvas);
+        draw3dGrid(canvas3d);
     }
 };
 
@@ -151,10 +154,12 @@ function draw3dGrid(canvas) {
         drawIsoLine(context, zeroPoint.addVector(xVector, i), yVector, 10, 0.5);
     }
 
-    drawCube(context, zeroPoint, '#ff0000');
-    drawCube(context, zeroPoint.addVector(xVector), '#00ff00');
-    drawCube(context, zeroPoint.addVector(yVector), '#0088ff');
-    drawCube(context, zeroPoint.addVector(zVector).addVector(zVector), '#ffff00');
+    // test
+    for (i = 0 ; i < grid1.width ; i++) {
+        for (var j = 0; j < grid1.height; j++) {
+            drawCube(context, zeroPoint.addVector(xVector, i).addVector(yVector, j), colorsHash[grid1.content[i][j]]);
+        }
+    }
 }
 
 function drawIsoLine(context, origin, vector, size, width) {
@@ -266,5 +271,4 @@ var grid1 = new Grid(10,10,colors);
 initButtons();
 
 grid1.draw(canvas);
-
 draw3dGrid(canvas3d);
