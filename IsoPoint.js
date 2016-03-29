@@ -18,5 +18,3 @@ IsoPoint.prototype.addVector = function (vector, size) {
 IsoPoint.prototype.toString = function () {
     return "{x:"+this.x+",y:"+this.y+"}";
 };
-
-var zeroPoint = new IsoPoint();

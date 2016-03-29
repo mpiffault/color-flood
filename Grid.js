@@ -1,42 +1,63 @@
 'use strict';
 
-var Grid = function (width, height, colors, canvas) {
+var MAIN_LAYER = 0;
+
+var Grid = function (width, height, colors, canvas, isoCanvas) {
     this.width = width;
     this.height = height;
     this.canvas = canvas;
+    this.isoCanvas = isoCanvas;
     this.content = _createGridContent(width, height, colors);
-    this.currentColor = this.content[0][0];
+    this.currentColor = this.content[MAIN_LAYER][0][0];
 };
 
-Grid.prototype.changeColor = function (newColor, x, y) {
+Grid.prototype.changeColor = function (newColor, x, y, layer, witness) {
+    if (newColor == this.currentColor) {
+        return;
+    }
     x = x || 0;
     y = y || 0;
 
-    if (!this.isColorable(x, y)) {
+    if (layer == undefined) {
+        layer = new Array(this.width);
+        for (var i=0 ; i < this.width ; i++) {
+            layer [i] = new Array(this.height);
+        }
+        this.content.splice(1,0,layer);
+        witness = new Array(this.width);
+        for (i=0 ; i < this.width ; i++) {
+            witness [i] = new Array(this.height);
+        }
+    }
+
+    if (!this.isColorable(x, y, witness)) {
         return;
     }
 
-    this.content[x][y] = newColor;
-    this.changeColor(newColor, x+1, y);
-    this.changeColor(newColor, x, y+1);
-    this.changeColor(newColor, x-1, y);
-    this.changeColor(newColor, x, y-1);
+    this.content[MAIN_LAYER][x][y] = newColor;
+    witness[x][y] = true;
+    layer[x][y] = this.currentColor;
+    this.changeColor(newColor, x+1, y, layer, witness);
+    this.changeColor(newColor, x, y+1, layer, witness);
+    this.changeColor(newColor, x-1, y, layer, witness);
+    this.changeColor(newColor, x, y-1, layer, witness);
 
     if (x == 0 && y == 0) {
         this.currentColor = newColor;
         this.draw();
+        this.draw3dGrid();
     }
 };
 
-Grid.prototype.isColorable = function (x, y) {
-    return !(x < 0 || y < 0 || x >= this.width || y >= this.length
-    || this.content[x][y] != this.currentColor);
+Grid.prototype.isColorable = function (x, y, witness) {
+    return !(x < 0 || y < 0 || x >= this.width || y >= this.height)
+    && (this.content[MAIN_LAYER][x][y] == this.currentColor && !witness[x][y]);
 };
 
 Grid.prototype.getString = function () {
     var string = "";
     for (var i=0 ; i < this.height ; i++) {
-        string += this.content[i].join(' ') + "\n";
+        string += this.content[MAIN_LAYER][i].join(' ') + "\n";
     }
     return string;
 };
@@ -53,23 +74,27 @@ Grid.prototype.draw = function () {
         for (var j = 0 ; j < this.height ; j++) {
             var startI = i * cellSize;
             var startJ = j * cellSize;
-            var color = colorsHash[this.content[i][j]];
+            var color = colorsHash[this.content[MAIN_LAYER][i][j]];
 
             context.beginPath();
             context.rect(startI, startJ, Math.ceil(cellSize), Math.ceil(cellSize));
             context.fillStyle = color;
             context.fill();
+            // context.fillStyle = '#000000';
+            // context.font = '11px serif'
+            // context.fillText(i+","+j,startI+10,startJ+25);
         }
     }
 };
 
 function _createGridContent(width, height, colors) {
-    var matrix = new Array(width);
+    var cube = new Array(1);
+    cube[0] = new Array(width);
     for(var i = 0 ; i < width ; i++) {
-        matrix[i] = new Array(height);
+        cube[0][i] = new Array(height);
         for (var j = 0 ; j < height ; j++) {
-            matrix[i][j] = colors[Math.floor(Math.random() * colors.length)];
+            cube[0][i][j] = colors[Math.floor(Math.random() * colors.length)];
         }
     }
-    return matrix;
+    return cube;
 }
