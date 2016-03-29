@@ -12,7 +12,7 @@ var yVector = {
 
 var zVector = {
     dX: 0,
-    dY: -2
+    dY: -4
 };
 
 Grid.prototype.draw3dGrid = function() {
