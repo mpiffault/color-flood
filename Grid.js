@@ -74,7 +74,7 @@ Grid.prototype.draw = function () {
         for (var j = 0 ; j < this.height ; j++) {
             var startI = i * cellSize;
             var startJ = j * cellSize;
-            var color = colorsHash[this.content[MAIN_LAYER][i][j]];
+            var color = colorsHash[this.content[MAIN_LAYER][i][j]][0];
 
             context.beginPath();
             context.rect(startI, startJ, Math.ceil(cellSize), Math.ceil(cellSize));

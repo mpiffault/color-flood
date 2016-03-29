@@ -40,7 +40,7 @@ Grid.prototype.draw3dGrid = function() {
             for (var j = 0; j < this.height; j++) {
                 var origin = zeroPoint.addVector(zVector, k).addVector(xVector, i).addVector(yVector, j);
                 if (this.content[k][i][j] != undefined) {
-                    drawCube(context, origin, colorsHash[this.content[k][i][j]]);
+                    drawCube(context, origin, this.content[k][i][j]);
                 }
             }
         }
@@ -59,8 +59,7 @@ function drawIsoLine(context, origin, vector, size, width) {
 
 function drawCube (context, origin, color) {
 
-    color = color || '#888888';
-    var topColor = color;
+    var topColor = colorsHash[color][0];
     var t1 = origin.addVector(xVector, -1);
     var t2 = t1.addVector(yVector, -1);
     var t3 = t2.addVector(xVector);
@@ -68,7 +67,7 @@ function drawCube (context, origin, color) {
     var topPoints = [t1,t2,t3,t4];
 
     drawFacet(context, origin, topPoints, topColor);
-    var leftColor = toLeftColor(color);
+    var leftColor = colorsHash[color][1];
     var l1 = origin.addVector(yVector, -1);
     var l2 = l1.addVector(zVector, -1);
     var l3 = l2.addVector(yVector);
@@ -76,7 +75,7 @@ function drawCube (context, origin, color) {
     var leftPoints = [l1,l2,l3,l4];
 
     drawFacet(context, origin, leftPoints, leftColor);
-    var rightColor = toRightColor(color);
+    var rightColor = colorsHash[color][2];
     var r1 = origin.addVector(xVector, -1);
     var r2 = r1.addVector(zVector, -1);
     var r3 = r2.addVector(xVector);
