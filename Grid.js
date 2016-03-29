@@ -12,8 +12,7 @@ Grid.prototype.changeColor = function (newColor, x, y) {
     x = x || 0;
     y = y || 0;
 
-    if (x < 0 || y < 0 || x >= this.width || y >= this.length
-        || this.content[x][y] != this.currentColor) {
+    if (!this.isColorable(x, y)) {
         return;
     }
 
@@ -27,6 +26,11 @@ Grid.prototype.changeColor = function (newColor, x, y) {
         this.currentColor = newColor;
         this.draw();
     }
+};
+
+Grid.prototype.isColorable = function (x, y) {
+    return !(x < 0 || y < 0 || x >= this.width || y >= this.length
+    || this.content[x][y] != this.currentColor);
 };
 
 Grid.prototype.getString = function () {
