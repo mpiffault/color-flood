@@ -43,3 +43,27 @@ initButtons();
 
 grid1.draw();
 grid1.draw3dGrid();
+
+var lastMouseEvent = {};
+isoCanvas.addEventListener('mousemove', function (e) {
+
+    if (e.buttons === 4) {
+        origin.x += e.movementX;
+        origin.y += e.movementY;
+        grid1.draw3dGrid();
+    }
+
+    if (e.buttons === 1) {
+        if (e.ctrlKey) {
+            origin.x += e.movementX;
+            origin.y += e.movementY;
+            grid1.draw3dGrid();
+        } else {
+            xVector.dX += e.movementX/10;
+            xVector.dY += e.movementY/10;
+            yVector.dX += e.movementX/10;
+            yVector.dY += e.movementY/10;
+            grid1.draw3dGrid();
+        }
+    }
+});

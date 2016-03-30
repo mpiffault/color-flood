@@ -1,5 +1,6 @@
 'use strict';
 
+
 var xVector = {
     dX: 10 * Math.sin(Math.PI / 3),
     dY: 10 * Math.cos(Math.PI / 3)
@@ -15,32 +16,35 @@ var zVector = {
     dY: -4
 };
 
+var origin = new IsoPoint();
+
 Grid.prototype.draw3dGrid = function() {
+    var i;
+    //origin = origin || new IsoPoint();
+    //origin = origin.addVector(xVector, 5).addVector(yVector,5);
 
     var context = this.isoCanvas.getContext('2d');
-    var zeroPoint = new IsoPoint();
-
 
     context.clearRect(0, 0, this.isoCanvas.width, this.isoCanvas.height);
 
-    context.stroke();
-    drawIsoLine(context, zeroPoint, xVector, 10);
-    drawIsoLine(context, zeroPoint, yVector, 10);
-
-    drawIsoLine(context, zeroPoint, zVector, 10);
-    for (var i = 1 ; i <= 10 ; i++) {
+    //context.stroke();
+    //drawIsoLine(context, origin, xVector, 10);
+    //drawIsoLine(context, origin, yVector, 10);
+//
+    //drawIsoLine(context, origin, zVector, 10);
+    /*for (var i = 1 ; i <= 10 ; i++) {
         // test
         context.strokeStyle = '#888888';
-        drawIsoLine(context, zeroPoint.addVector(yVector, i), xVector, 10, 0.5);
-        drawIsoLine(context, zeroPoint.addVector(xVector, i), yVector, 10, 0.5);
-    }
+        drawIsoLine(context, origin.addVector(yVector, i), xVector, 10, 0.5);
+        drawIsoLine(context, origin.addVector(xVector, i), yVector, 10, 0.5);
+    }*/
 
     for (var k = 0 ; k < this.content.length ; k++) {
         for (i = 0; i < this.width; i++) {
             for (var j = 0; j < this.height; j++) {
-                var origin = zeroPoint.addVector(zVector, k).addVector(xVector, i).addVector(yVector, j);
+                var cubeOrigin = origin.addVector(zVector, k).addVector(xVector, i-12).addVector(yVector, j-12);
                 if (this.content[k][i][j] != undefined) {
-                    drawCube(context, origin, this.content[k][i][j]);
+                    drawCube(context, cubeOrigin, this.content[k][i][j]);
                 }
             }
         }
@@ -57,31 +61,31 @@ function drawIsoLine(context, origin, vector, size, width) {
     context.stroke();
 }
 
-function drawCube (context, origin, color) {
+function drawCube (context, cubeOrigin, color) {
 
     var topColor = colorsHash[color][0];
-    var t1 = origin.addVector(xVector, -1);
+    var t1 = cubeOrigin.addVector(xVector, -1);
     var t2 = t1.addVector(yVector, -1);
     var t3 = t2.addVector(xVector);
     var t4 = t3.addVector(yVector);
     var topPoints = [t1,t2,t3,t4];
+    drawFacet(context, cubeOrigin, topPoints, topColor);
 
-    drawFacet(context, origin, topPoints, topColor);
     var leftColor = colorsHash[color][1];
-    var l1 = origin.addVector(yVector, -1);
+    var l1 = cubeOrigin.addVector(yVector, -1);
     var l2 = l1.addVector(zVector, -1);
     var l3 = l2.addVector(yVector);
     var l4 = l3.addVector(zVector);
     var leftPoints = [l1,l2,l3,l4];
+    drawFacet(context, cubeOrigin, leftPoints, leftColor);
 
-    drawFacet(context, origin, leftPoints, leftColor);
     var rightColor = colorsHash[color][2];
-    var r1 = origin.addVector(xVector, -1);
+    var r1 = cubeOrigin.addVector(xVector, -1);
     var r2 = r1.addVector(zVector, -1);
     var r3 = r2.addVector(xVector);
     var r4 = r3.addVector(zVector);
     var rightPoints = [r1,r2,r3,r4];
-    drawFacet(context, origin, rightPoints, rightColor);
+    drawFacet(context, cubeOrigin, rightPoints, rightColor);
 }
 
 function toLeftColor(color) {
@@ -108,9 +112,9 @@ function toRightColor(color) {
     return _rgbToHex(r,g,b);
 }
 
-function drawFacet (context, origin, points, color) {
+function drawFacet (context, cubeOrigin, points, color) {
     context.beginPath();
-    context.moveTo(origin.x, origin.y);
+    context.moveTo(cubeOrigin.x, cubeOrigin.y);
     for (var i = 0 ; i < points.length ; i++) {
         context.lineTo(points[i].x, points[i].y);
     }
