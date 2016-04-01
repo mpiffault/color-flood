@@ -4,6 +4,9 @@ var canvas = document.getElementById('2dgrid');
 
 var isoCanvas = document.getElementById('3dgrid');
 
+var TOP_COLOR = 0;
+var LEFT_COLOR = 1;
+var RIGHT_COLOR = 2;
 var colorsHash = {
     'A' : ['#655643'],
     'B' : ['#80BCA3'],
@@ -14,15 +17,19 @@ var colorsHash = {
 var colors = [];
 for (var color in colorsHash) {
     if (colorsHash.hasOwnProperty(color)) {
-        var leftColor = toLeftColor(colorsHash[color][0]);
-        var rightColor = toRightColor(colorsHash[color][0]);
+        var leftColor = toLeftColor(colorsHash[color][TOP_COLOR]);
+        var rightColor = toRightColor(colorsHash[color][TOP_COLOR]);
         colorsHash[color].push(leftColor);
         colorsHash[color].push(rightColor);
         colors.push(color);
     }
 }
 
-var grid1 = new Grid(25,25,colors, canvas, isoCanvas);
+function initColors (colorHash) {
+
+}
+
+var grid1 = new Grid(10,10,colors, canvas, isoCanvas);
 
 function initButtons() {
     for (var localColor in colorsHash) {
@@ -44,25 +51,19 @@ initButtons();
 grid1.draw();
 grid1.draw3dGrid();
 
-var lastMouseEvent = {};
+function valueBetween(value, min, max) {
+    return Math.max(min, Math.min(max, value));
+}
+
 isoCanvas.addEventListener('mousemove', function (e) {
-
-    if (e.buttons === 4) {
-        origin.x += e.movementX;
-        origin.y += e.movementY;
-        grid1.draw3dGrid();
-    }
-
     if (e.buttons === 1) {
         if (e.ctrlKey) {
             origin.x += e.movementX;
             origin.y += e.movementY;
             grid1.draw3dGrid();
         } else {
-            xVector.dX += e.movementX/10;
-            xVector.dY += e.movementY/10;
-            yVector.dX += e.movementX/10;
-            yVector.dY += e.movementY/10;
+            zHorizontalAngle = valueBetween(zHorizontalAngle - e.movementY / 100, 0, Math.PI/2);
+            zRotationAngle = valueBetween(zRotationAngle - e.movementX / 100, 0, Math.PI/2);
             grid1.draw3dGrid();
         }
     }

@@ -1,54 +1,59 @@
 'use strict';
 
+var DEG_30 = Math.PI / 3;
+var DEG_60 = (Math.PI * 2) / 3;
+var DEG_45 = Math.PI / 4;
+var DEG_90 = Math.PI / 2;
+
+var zHorizontalAngle = DEG_30;
+var zRotationAngle = DEG_45;
 
 var xVector = {
-    dX: 10 * Math.sin(Math.PI / 3),
-    dY: 10 * Math.cos(Math.PI / 3)
+    dX: function() {return 20 * Math.cos(zRotationAngle);},
+    dY: function() {return 20 * Math.sin(zRotationAngle)*(Math.cos(zHorizontalAngle));}
 };
 
 var yVector = {
-    dX: -10 * Math.sin(Math.PI / 3),
-    dY: 10 * Math.cos(Math.PI / 3)
+    dX: function() {return -20 * Math.sin(zRotationAngle);},
+    dY: function() {return 20 * Math.cos(zRotationAngle)*(Math.cos(zHorizontalAngle));}
 };
 
 var zVector = {
-    dX: 0,
-    dY: -4
+    dX: function() {return 0;},
+    dY: function() {return -20 * Math.sin(zHorizontalAngle);}
 };
 
-var origin = new IsoPoint();
+var origin = new IsoPoint().addVector(xVector, 5).addVector(yVector, 5);
+var axesLength = 5
 
 Grid.prototype.draw3dGrid = function() {
     var i;
-    //origin = origin || new IsoPoint();
-    //origin = origin.addVector(xVector, 5).addVector(yVector,5);
 
     var context = this.isoCanvas.getContext('2d');
 
     context.clearRect(0, 0, this.isoCanvas.width, this.isoCanvas.height);
 
-    //context.stroke();
-    //drawIsoLine(context, origin, xVector, 10);
-    //drawIsoLine(context, origin, yVector, 10);
-//
-    //drawIsoLine(context, origin, zVector, 10);
-    /*for (var i = 1 ; i <= 10 ; i++) {
-        // test
+
+    // grid
+    /*for (var i = 1 ; i <= axesLength ; i++) {
         context.strokeStyle = '#888888';
-        drawIsoLine(context, origin.addVector(yVector, i), xVector, 10, 0.5);
-        drawIsoLine(context, origin.addVector(xVector, i), yVector, 10, 0.5);
+        drawIsoLine(context, origin.addVector(yVector, i), xVector, axesLength, 0.5);
+        drawIsoLine(context, origin.addVector(xVector, i), yVector, axesLength, 0.5);
     }*/
 
     for (var k = 0 ; k < this.content.length ; k++) {
         for (i = 0; i < this.width; i++) {
             for (var j = 0; j < this.height; j++) {
-                var cubeOrigin = origin.addVector(zVector, k).addVector(xVector, i-12).addVector(yVector, j-12);
+                var cubeOrigin = origin.addVector(zVector, k).addVector(xVector, i+1-this.width/2).addVector(yVector, j+1-this.height/2);
                 if (this.content[k][i][j] != undefined) {
                     drawCube(context, cubeOrigin, this.content[k][i][j]);
                 }
             }
         }
     }
+    /*drawIsoLine(context, origin, xVector, axesLength);
+    drawIsoLine(context, origin, yVector, axesLength);
+    drawIsoLine(context, origin, zVector, axesLength);*/
 };
 
 function drawIsoLine(context, origin, vector, size, width) {
@@ -56,14 +61,14 @@ function drawIsoLine(context, origin, vector, size, width) {
     width = width || 1;
     context.beginPath();
     context.moveTo(origin.x, origin.y);
-    context.lineTo(origin.x + (vector.dX * size), origin.y + (vector.dY * size));
+    context.lineTo(origin.x + (vector.dX() * size), origin.y + (vector.dY() * size));
     context.lineWidth = width;
     context.stroke();
 }
 
 function drawCube (context, cubeOrigin, color) {
 
-    var topColor = colorsHash[color][0];
+    var topColor = colorsHash[color][TOP_COLOR];
     var t1 = cubeOrigin.addVector(xVector, -1);
     var t2 = t1.addVector(yVector, -1);
     var t3 = t2.addVector(xVector);
@@ -71,7 +76,7 @@ function drawCube (context, cubeOrigin, color) {
     var topPoints = [t1,t2,t3,t4];
     drawFacet(context, cubeOrigin, topPoints, topColor);
 
-    var leftColor = colorsHash[color][1];
+    var leftColor = colorsHash[color][LEFT_COLOR];
     var l1 = cubeOrigin.addVector(yVector, -1);
     var l2 = l1.addVector(zVector, -1);
     var l3 = l2.addVector(yVector);
@@ -79,7 +84,7 @@ function drawCube (context, cubeOrigin, color) {
     var leftPoints = [l1,l2,l3,l4];
     drawFacet(context, cubeOrigin, leftPoints, leftColor);
 
-    var rightColor = colorsHash[color][2];
+    var rightColor = colorsHash[color][RIGHT_COLOR];
     var r1 = cubeOrigin.addVector(xVector, -1);
     var r2 = r1.addVector(zVector, -1);
     var r3 = r2.addVector(xVector);

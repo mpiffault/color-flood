@@ -10,8 +10,8 @@ IsoPoint.prototype.addVector = function (vector, size) {
         size = size || 1;
     }
     var newPoint = new IsoPoint(this.x, this.y);
-    newPoint.x = newPoint.x + vector.dX * size;
-    newPoint.y = newPoint.y + vector.dY * size;
+    newPoint.x = newPoint.x + vector.dX() * size;
+    newPoint.y = newPoint.y + vector.dY() * size;
     return newPoint;
 };
 
