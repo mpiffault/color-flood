@@ -96,24 +96,24 @@ function drawCube (context, cubeOrigin, color) {
 function toLeftColor(color) {
     var r = _hexToR(color);
     var g = _hexToG(color);
-
     var b = _hexToB(color);
+
     r = Math.max(0,r - 30);
     g = Math.max(0,g - 30);
-
     b = Math.max(0,b - 30);
+
     return _rgbToHex(r,g,b);
 }
 
 function toRightColor(color) {
     var r = _hexToR(color);
     var g = _hexToG(color);
-
     var b = _hexToB(color);
+
     r = Math.max(0,r - 60);
     g = Math.max(0,g - 60);
-
     b = Math.max(0,b - 60);
+
     return _rgbToHex(r,g,b);
 }
 
@@ -124,8 +124,6 @@ function drawFacet (context, cubeOrigin, points, color) {
         context.lineTo(points[i].x, points[i].y);
     }
     context.closePath();
-    var colorBackup = context.fillStyle;
     context.fillStyle = color;
     context.fill();
-    context.fillStyle = colorBackup;
 }
