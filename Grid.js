@@ -80,9 +80,6 @@ Grid.prototype.draw = function () {
             context.rect(startI, startJ, Math.ceil(cellSize), Math.ceil(cellSize));
             context.fillStyle = color;
             context.fill();
-            // context.fillStyle = '#000000';
-            // context.font = '11px serif'
-            // context.fillText(i+","+j,startI+10,startJ+25);
         }
     }
 };

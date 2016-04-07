@@ -25,10 +25,6 @@ for (var color in colorsHash) {
     }
 }
 
-function initColors (colorHash) {
-
-}
-
 var grid1 = new Grid(10,10,colors, canvas, isoCanvas);
 
 function initButtons() {

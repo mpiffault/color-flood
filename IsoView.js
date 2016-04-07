@@ -24,7 +24,6 @@ var zVector = {
 };
 
 var origin = new IsoPoint().addVector(xVector, 5).addVector(yVector, 5);
-var axesLength = 5
 
 Grid.prototype.draw3dGrid = function() {
     var i;
@@ -33,38 +32,34 @@ Grid.prototype.draw3dGrid = function() {
 
     context.clearRect(0, 0, this.isoCanvas.width, this.isoCanvas.height);
 
-
-    // grid
-    /*for (var i = 1 ; i <= axesLength ; i++) {
-        context.strokeStyle = '#888888';
-        drawIsoLine(context, origin.addVector(yVector, i), xVector, axesLength, 0.5);
-        drawIsoLine(context, origin.addVector(xVector, i), yVector, axesLength, 0.5);
-    }*/
+    context.globalAlpha = 1;
 
     for (var k = 0 ; k < this.content.length ; k++) {
         for (i = 0; i < this.width; i++) {
             for (var j = 0; j < this.height; j++) {
                 var cubeOrigin = origin.addVector(zVector, k).addVector(xVector, i+1-this.width/2).addVector(yVector, j+1-this.height/2);
-                if (this.content[k][i][j] != undefined) {
+                if (this.mustBeDrawn(k, i, j)) {
                     drawCube(context, cubeOrigin, this.content[k][i][j]);
                 }
             }
         }
     }
-    /*drawIsoLine(context, origin, xVector, axesLength);
-    drawIsoLine(context, origin, yVector, axesLength);
-    drawIsoLine(context, origin, zVector, axesLength);*/
+
 };
 
-function drawIsoLine(context, origin, vector, size, width) {
-
-    width = width || 1;
-    context.beginPath();
-    context.moveTo(origin.x, origin.y);
-    context.lineTo(origin.x + (vector.dX() * size), origin.y + (vector.dY() * size));
-    context.lineWidth = width;
-    context.stroke();
-}
+Grid.prototype.mustBeDrawn = function(k, i, j) {
+    return (this.content[k][i][j] != undefined) &&
+        (
+            (k == this.content.length - 1)
+            || (i == this.width - 1)
+            || (j == this.height - 1)
+            || (
+                (k+1 < this.content.length && this.content[k+1][i][j] == undefined)
+                || (i+1 < this.content[0].length && this.content[k][i+1][j] == undefined)
+                || (j+1 < this.content[0][0].length && this.content[k][i][j+1] == undefined)
+            )
+        )
+};
 
 function drawCube (context, cubeOrigin, color) {
 
