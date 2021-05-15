@@ -1,7 +1,7 @@
 #Little clone of [Open Flood](https://github.com/GunshipPenguin/open_flood)
 
 The default grid is 24x24 with 5 colors.
-Example [here](https://kimi.rouage.fr/color-flood)
+Example [here](https://rouage.fr/color-flood)
 
 ##Features (Todo) :
 
